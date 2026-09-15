@@ -101,37 +101,30 @@ public class OrangeHrmTC1 {
 		driver.findElement(By.name("password")).sendKeys(password);
 
 		driver.findElement(By.cssSelector("[type='submit']")).click();
+		
+		Thread.sleep(2000);
 
 		
 		// PIM SECTION
 		
-
-		driver.findElement(
-				By.cssSelector("[href='/web/index.php/pim/viewPimModule']"))
-				.click();
-
-		driver.findElement(
-				By.xpath("//button[normalize-space()='Add']"))
-				.click();
+		driver.findElement(By.cssSelector("[href='/web/index.php/pim/viewPimModule']")).click();
+		
+		driver.findElement(By.xpath("//button[normalize-space()='Add']")).click();
+		
 
 		// Enter first name
-		driver.findElement(By.name("firstName"))
-				.sendKeys(firstName);
+		driver.findElement(By.name("firstName")).sendKeys(firstName);
 
 		// Enter middle name
-		driver.findElement(By.name("middleName"))
-				.sendKeys(middleName);
+		driver.findElement(By.name("middleName")).sendKeys(middleName);
 
 		// Enter last name
-		driver.findElement(By.name("lastName"))
-				.sendKeys(lastName);
+		driver.findElement(By.name("lastName")).sendKeys(lastName);
 
 		// Employee ID
-		WebElement empId = driver.findElement(
-				By.xpath("//label[text()='Employee Id']/following::input[1]"));
+		WebElement empId = driver.findElement(By.xpath("//label[text()='Employee Id']/following::input[1]"));
 
 		empId.click();
-
 		empId.sendKeys(Keys.CONTROL, "a");
 
 		empId.sendKeys(Keys.BACK_SPACE);
@@ -139,22 +132,16 @@ public class OrangeHrmTC1 {
 		empId.sendKeys(employeeId);
 
 		// Create Login Details switch
-		driver.findElement(
-				By.cssSelector("span.oxd-switch-input"))
-				.click();
+		driver.findElement(By.cssSelector("span.oxd-switch-input")).click();
 
 		// Username
-		driver.findElement(
-				By.xpath("//label[text()='Username']/../following-sibling::div//input"))
-				.sendKeys(newUsername);
+		driver.findElement(By.xpath("//label[text()='Username']/../following-sibling::div//input")).sendKeys(newUsername);
 
 		// Password
-		WebElement passwordField = driver.findElement(
-				By.xpath("//label[text()='Password']/../following-sibling::div//input"));
+		WebElement passwordField = driver.findElement(By.xpath("//label[text()='Password']/../following-sibling::div//input"));
 
 		// Confirm Password
-		WebElement confirmPasswordField = driver.findElement(
-				By.xpath("//label[text()='Confirm Password']/../following-sibling::div//input"));
+		WebElement confirmPasswordField = driver.findElement(By.xpath("//label[text()='Confirm Password']/../following-sibling::div//input"));
 
 		passwordField.clear();
 
@@ -169,78 +156,54 @@ public class OrangeHrmTC1 {
 
 		Thread.sleep(3000);
 
-		
 		// ADMIN SECTION
-		
 
-		driver.findElement(
-				By.cssSelector("[href='/web/index.php/admin/viewAdminModule']"))
-				.click();
-
+		driver.findElement(By.cssSelector("[href='/web/index.php/admin/viewAdminModule']")).click();
+		Thread.sleep(2000);
 		// Username search
-		driver.findElement(
-				By.xpath("//label[text()='Username']/following::input[1]"))
-				.sendKeys(newUsername);
+		driver.findElement(By.xpath("//label[text()='Username']/following::input[1]")).sendKeys(newUsername);
 
 		// User Role
-		driver.findElement(
-				By.xpath("//label[text()='User Role']/following::div[contains(@class,'oxd-select-text')][1]"))
-				.click();
+		driver.findElement(By.xpath("//label[text()='User Role']/following::div[contains(@class,'oxd-select-text')][1]")).click();
 
 		// Select User Role
-		driver.findElement(
-				By.xpath("//div[@role='option']//span[normalize-space()='" + role + "']"))
-				.click();
+		driver.findElement(By.xpath("//div[@role='option']//span[normalize-space()='" + role + "']")).click();
 
 		// Employee Name
-		WebElement empName = driver.findElement(
-				By.xpath("//label[text()='Employee Name']/following::input[1]"));
+		WebElement empName = driver.findElement(By.xpath("//label[text()='Employee Name']/following::input[1]"));
 
 		empName.sendKeys(employeeName);
 
 		Thread.sleep(2000);
 
 		// Select employee from dropdown
-		driver.findElement(
-				By.xpath("//div[@role='option']//span[contains(text(),'" + employeeName + "')]"))
-				.click();
+		driver.findElement(By.xpath("//div[@role='option']//span[contains(text(),'" + employeeName + "')]")).click();
 
 		// Status
-		driver.findElement(
-				By.xpath("//label[text()='Status']/following::div[contains(@class,'oxd-select-text')][1]"))
-				.click();
+		driver.findElement(By.xpath("//label[text()='Status']/following::div[contains(@class,'oxd-select-text')][1]")).click();
 
 		// Select status
-		driver.findElement(
-				By.xpath("//div[@role='option']//span[normalize-space()='" + status + "']"))
-				.click();
+		driver.findElement(By.xpath("//div[@role='option']//span[normalize-space()='" + status + "']")).click();
 
 		// Search
-		driver.findElement(
-				By.cssSelector("[type='submit']"))
-				.click();
+		driver.findElement(By.cssSelector("[type='submit']")).click();
 
 		Thread.sleep(2000);
 
-		
 		// VERIFY
-		
 
-		WebElement employeeRecord = driver.findElement(
-				By.xpath("//div[@role='row']//div[text()='" + newUsername + "']"));
+		WebElement employeeRecord = driver.findElement(By.xpath("//div[@role='row']//div[text()='" + newUsername + "']"));
 
 		if (employeeRecord.isDisplayed()) {
 
-			System.out.println(
-					"Employee is successfully added and displayed in Records Found");
+			System.out.println("Employee is successfully added and displayed in Records Found");
 
 		} else {
 
-			System.out.println(
-					"Employee is NOT displayed in Records Found");
+			System.out.println("Employee is NOT displayed in Records Found");
 		}
 
-		
+
 		// LOGOUT
 
 		driver.findElement(
