@@ -18,6 +18,7 @@ import java.util.Properties;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -25,16 +26,20 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-public class OrangeHrm {
+public class OrangeHrmTC1 {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		FileInputStream fis = new FileInputStream("./src/test/resources/DTT/hrm.properties");
-		//step 2
+
+		// Read data from properties file
+		FileInputStream fis = new FileInputStream(
+				"./src/test/resources/DDT/OrangeHrm.properties");
+
 		Properties p = new Properties();
 		p.load(fis);
-		
+
+		// Read data from Excel
 		FileInputStream excel = new FileInputStream(
-		        "./src/test/resources/DTT/Book1.xlsx");
+				"./src/test/resources/DDT/OrangeHRm.xlsx");
 
 		Workbook wb = WorkbookFactory.create(excel);
 
@@ -48,111 +53,210 @@ public class OrangeHrm {
 		String role = wb.getSheet("Sheet1").getRow(1).getCell(7).getStringCellValue();
 		String employeeName = wb.getSheet("Sheet1").getRow(1).getCell(8).getStringCellValue();
 		String status = wb.getSheet("Sheet1").getRow(1).getCell(9).getStringCellValue();
-		
+
+		// Read data from properties file
 		String Browser = p.getProperty("Browser");
-	    String URL = p.getProperty("url");
-	    String username = p.getProperty("Username");
-	    String password = p.getProperty("Password");
+		String URL = p.getProperty("url");
+		String username = p.getProperty("Username");
+		String password = p.getProperty("Password");
+
+		// Print values to verify Excel data
+		System.out.println("First Name: " + firstName);
+		System.out.println("Middle Name: " + middleName);
+		System.out.println("Last Name: " + lastName);
+		System.out.println("Employee ID: " + employeeId);
+		System.out.println("New Username: " + newUsername);
+		System.out.println("New Password: " + newPassword);
+		System.out.println("Confirm Password: " + confirmPassword);
+		System.out.println("Role: " + role);
+		System.out.println("Employee Name: " + employeeName);
+		System.out.println("Status: " + status);
+
 		WebDriver driver = null;
 
-		if (Browser.equals("chrome")) {
+		// Launch browser
+		if (Browser.equalsIgnoreCase("chrome")) {
 
-		    ChromeOptions option = new ChromeOptions();
+			ChromeOptions option = new ChromeOptions();
 
-		    Map<String, Object> prefs = new HashMap<>();
-		    prefs.put("profile.password_manager_leak_detection", false);
-		    option.setExperimentalOption("prefs", prefs);
+			Map<String, Object> prefs = new HashMap<>();
 
-		    driver = new ChromeDriver(option);
+			prefs.put("profile.password_manager_leak_detection", false);
+
+			option.setExperimentalOption("prefs", prefs);
+
+			driver = new ChromeDriver(option);
 		}
 
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+		driver.manage().window().maximize();
 
-        // Open OrangeHRM
-        driver.get(URL);
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
-        // Login
-        driver.findElement(By.name("username")).sendKeys(username);
-        driver.findElement(By.name("password")).sendKeys(password);
-        driver.findElement(By.cssSelector("[type='submit']")).click();
-        
-        //pim section
-        driver.findElement(By.cssSelector("[href='/web/index.php/pim/viewPimModule']")).click();
-        driver.findElement(By.xpath("//button[normalize-space()='Add']")).click();
-        
-        driver.findElement(By.name("firstName")).sendKeys(firstName);
+		// Open OrangeHRM
+		driver.get(URL);
 
-        driver.findElement(By.name("middleName")).sendKeys(middleName);
+		// Login
+		driver.findElement(By.name("username")).sendKeys(username);
 
-        driver.findElement(By.name("lastName")).sendKeys(lastName);
+		driver.findElement(By.name("password")).sendKeys(password);
 
-        WebElement empId = driver.findElement(By.xpath("//label[text()='Employee Id']/following::input[1]"));
-        empId.click();
-        empId.sendKeys(Keys.CONTROL, "a");
-        empId.sendKeys(Keys.BACK_SPACE);
-        empId.sendKeys(employeeId);
-        
-        driver.findElement(By.cssSelector("span.oxd-switch-input")).click();
-        
-        
-        driver.findElement(By.xpath("//label[text()='Username']/../following-sibling::div//input"))
-        .sendKeys(newUsername);
+		driver.findElement(By.cssSelector("[type='submit']")).click();
 
-        WebElement passwordField = driver.findElement(By.xpath("//label[text()='Password']/../following-sibling::div//input"));
+		
+		// PIM SECTION
+		
 
-        WebElement confirmPasswordField = driver.findElement(By.xpath("//label[text()='Confirm Password']/../following-sibling::div//input"));
+		driver.findElement(
+				By.cssSelector("[href='/web/index.php/pim/viewPimModule']"))
+				.click();
 
-        passwordField.clear();
-        confirmPasswordField.clear();
+		driver.findElement(
+				By.xpath("//button[normalize-space()='Add']"))
+				.click();
 
-        passwordField.sendKeys(newPassword);
-        confirmPasswordField.sendKeys(confirmPassword);
-        
-        driver.findElement(By.cssSelector("[type='submit']")).click(); 
-        Thread.sleep(3000);
-        
-        //admin section
-        driver.findElement(By.cssSelector("[href='/web/index.php/admin/viewAdminModule']")).click();
-        
-        driver.findElement(By.xpath("//label[text()='Username']/following::input[1]")).sendKeys(newUsername);
-        
-        driver.findElement(By.xpath("//label[text()='User Role']/following::div[contains(@class,'oxd-select-text')][1]")).click();
+		// Enter first name
+		driver.findElement(By.name("firstName"))
+				.sendKeys(firstName);
 
-        driver.findElement(By.xpath("//div[@role='option']//span[text()='" + role + "']")).click();
-        
-        WebElement empName = driver.findElement(By.xpath("//label[text()='Employee Name']/following::input[1]"));
-        empName.sendKeys(employeeName);
-        Thread.sleep(2000);
-        driver.findElement(By.xpath("//div[@role='option']//span[contains(text(),'" + employeeName + "')]")).click();
+		// Enter middle name
+		driver.findElement(By.name("middleName"))
+				.sendKeys(middleName);
 
-        
-        driver.findElement(By.xpath("//label[text()='Status']/following::div[contains(@class,'oxd-select-text')][1]")).click();
+		// Enter last name
+		driver.findElement(By.name("lastName"))
+				.sendKeys(lastName);
 
-        driver.findElement(By.xpath("//div[@role='option']//span[text()='" + status + "']")).click();
-        
-        driver.findElement(By.cssSelector("[type='submit']")).click();
-        
-        Thread.sleep(2000);
-        
-        //verify
-        WebElement employeeRecord = driver.findElement(
-                By.xpath("//div[@role='row']//div[text()='" + newUsername + "']")
-        );
+		// Employee ID
+		WebElement empId = driver.findElement(
+				By.xpath("//label[text()='Employee Id']/following::input[1]"));
 
-        if (employeeRecord.isDisplayed()) {
-            System.out.println("Employee is successfully added and displayed in Records Found");
-        } else {
-            System.out.println("Employee is NOT displayed in Records Found");
-        }
-        
-        //logout
-        driver.findElement(By.className("oxd-userdropdown-name")).click();
-        
-        driver.findElement(By.xpath("//a[text()='Logout']")).click();
-        
-        driver.quit();
+		empId.click();
 
+		empId.sendKeys(Keys.CONTROL, "a");
+
+		empId.sendKeys(Keys.BACK_SPACE);
+
+		empId.sendKeys(employeeId);
+
+		// Create Login Details switch
+		driver.findElement(
+				By.cssSelector("span.oxd-switch-input"))
+				.click();
+
+		// Username
+		driver.findElement(
+				By.xpath("//label[text()='Username']/../following-sibling::div//input"))
+				.sendKeys(newUsername);
+
+		// Password
+		WebElement passwordField = driver.findElement(
+				By.xpath("//label[text()='Password']/../following-sibling::div//input"));
+
+		// Confirm Password
+		WebElement confirmPasswordField = driver.findElement(
+				By.xpath("//label[text()='Confirm Password']/../following-sibling::div//input"));
+
+		passwordField.clear();
+
+		confirmPasswordField.clear();
+
+		passwordField.sendKeys(newPassword);
+
+		confirmPasswordField.sendKeys(confirmPassword);
+
+		// Save employee
+		driver.findElement(By.cssSelector("[type='submit']")).click();
+
+		Thread.sleep(3000);
+
+		
+		// ADMIN SECTION
+		
+
+		driver.findElement(
+				By.cssSelector("[href='/web/index.php/admin/viewAdminModule']"))
+				.click();
+
+		// Username search
+		driver.findElement(
+				By.xpath("//label[text()='Username']/following::input[1]"))
+				.sendKeys(newUsername);
+
+		// User Role
+		driver.findElement(
+				By.xpath("//label[text()='User Role']/following::div[contains(@class,'oxd-select-text')][1]"))
+				.click();
+
+		// Select User Role
+		driver.findElement(
+				By.xpath("//div[@role='option']//span[normalize-space()='" + role + "']"))
+				.click();
+
+		// Employee Name
+		WebElement empName = driver.findElement(
+				By.xpath("//label[text()='Employee Name']/following::input[1]"));
+
+		empName.sendKeys(employeeName);
+
+		Thread.sleep(2000);
+
+		// Select employee from dropdown
+		driver.findElement(
+				By.xpath("//div[@role='option']//span[contains(text(),'" + employeeName + "')]"))
+				.click();
+
+		// Status
+		driver.findElement(
+				By.xpath("//label[text()='Status']/following::div[contains(@class,'oxd-select-text')][1]"))
+				.click();
+
+		// Select status
+		driver.findElement(
+				By.xpath("//div[@role='option']//span[normalize-space()='" + status + "']"))
+				.click();
+
+		// Search
+		driver.findElement(
+				By.cssSelector("[type='submit']"))
+				.click();
+
+		Thread.sleep(2000);
+
+		
+		// VERIFY
+		
+
+		WebElement employeeRecord = driver.findElement(
+				By.xpath("//div[@role='row']//div[text()='" + newUsername + "']"));
+
+		if (employeeRecord.isDisplayed()) {
+
+			System.out.println(
+					"Employee is successfully added and displayed in Records Found");
+
+		} else {
+
+			System.out.println(
+					"Employee is NOT displayed in Records Found");
+		}
+
+		
+		// LOGOUT
+
+		driver.findElement(
+				By.className("oxd-userdropdown-name"))
+				.click();
+
+		driver.findElement(
+				By.xpath("//a[text()='Logout']"))
+				.click();
+
+		// Close browser
+		driver.quit();
+
+		// Close files
+		wb.close();
+		excel.close();
+		fis.close();
 	}
-
 }
