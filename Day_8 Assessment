@@ -5,6 +5,21 @@ select any option for vacancy ,enter email, mobile number , upload file ,select 
 select job title , select vacancy , select hiring manager ,select status , enter candidate name,select application date and click on search button -> 
 verify whether the employee is added from the records found section and logout.
 --------------------------------------------------------------------------------------------
+//property file
+
+browser chrome
+url https://opensource-demo.orangehrmlive.com/web/index.php/auth/login
+username Admin
+password admin123
+-----------------------------------------------------------------------------------------
+//excel file
+
+| FirstName | MiddleName | LastName | Vacancy           | Email                                         | MobileNumber | Resume                                                                   | ApplicationDate | JobTitle          | SearchVacancy     | HiringManager | Status                | CandidateName      | SearchApplicationDate |
+| --------- | ---------- | -------- | ----------------- | --------------------------------------------- | ------------ | ------------------------------------------------------------------------ | --------------- | ----------------- | ----------------- | ------------- | --------------------- | ------------------ | --------------------- |
+| Snigdha   | Spoorthi   | A        | Software Engineer | [snigdha@gmail.com](mailto:snigdha@gmail.com) | 789456120    | C:\Users\snigd\OneDrive\Documents\Desktop\Snigdha Spoorthi A Resume.docx | 15              | Software Engineer | Software Engineer | Rahul Patil   | Application Initiated | Snigdha Spoorthi A | 15                    |
+
+--------------------------------------------------------------------------------------------
+
 //Login page
 
 package pomUtilities;
