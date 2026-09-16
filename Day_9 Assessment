@@ -1,0 +1,86 @@
+//Keyword Implementation
+
+package pomUtilities;
+
+import java.time.Duration;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class SauceKeywordImplementation {
+	WebDriver driver;
+	public void launchBrowser() {
+		driver = new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+	}
+	
+	public void openurl() {
+		driver.get("https://www.saucedemo.com/");
+	}
+	public void username() {
+		driver.findElement(By.id("user-name")).sendKeys("standard_user");
+	}
+	public void password() {
+		driver.findElement(By.id("password")).sendKeys("secret_sauce");
+	}
+	public void loginbtn() {
+		driver.findElement(By.id("login-button")).click();
+	}
+	public void closebrowser() {
+		driver.quit();
+	}
+}
+---------------------------------------------------------------------------------------------------
+//Keyword Executors
+
+package pomUtilities;
+
+public class Sauceexecutors {
+	SauceKeywordImplementation k = new SauceKeywordImplementation();
+	public void executors(String keyword) {
+		if(keyword.equals("LAUNCH_BROWSER")) {
+			k.launchBrowser();
+		}
+		
+		else if(keyword.equals("OPEN_URL")) {
+			k.openurl();
+		}
+		
+		else if(keyword.equals("USERNAME_TF")) {
+			k.username();
+		}
+		
+		else if(keyword.equals("PASSWORD_TF")) {
+			k.password();
+		}
+		else if(keyword.equals("LOGIN_BUTTON")) {
+			k.loginbtn();
+		}
+		
+		else if(keyword.equals("CLOSE_BROWSER")) {
+			k.closebrowser();
+		}
+	}
+
+}
+-----------------------------------------------------------------------------------------------------------
+//Java code
+
+package pomImplementation;
+
+import pomUtilities.Sauceexecutors;
+
+public class SauceKeyword {
+	public static void main(String[] args) {
+		Sauceexecutors e = new Sauceexecutors();
+		e.executors("LAUNCH_BROWSER");
+		e.executors("OPEN_URL");
+		e.executors("USERNAME_TF");
+		e.executors("PASSWORD_TF");
+		e.executors("LOGIN_BUTTON");
+		e.executors("CLOSE_BROWSER");
+	}
+}
+
