@@ -1,0 +1,611 @@
+//TestCase  - 1
+
+Login to orangeHrm application ->click on Recruitment link ->click on vacancies link ->enter vacancy name ,
+select job title,add description , select hiring manager, number of positons-> 
+click on save button
+
+//Testcase 2
+
+Login to orangeHrm application ->click on MyInfo link ->change employee first name, lastname ,employee id ->
+click on save->logut and then login again ->verify whether the edited details are updated-> logout
+---------------------------------------------------------------------------------------------------
+//Property file
+
+browser chrome
+url https://opensource-demo.orangehrmlive.com/web/index.php/auth/login
+username Admin
+password admin123
+----------------------------------------------------------------
+//Base class
+
+package baseClassUtility;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Properties;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+
+public class BaseClass {
+
+    protected WebDriver driver;
+
+    protected Properties properties;
+
+    @BeforeSuite
+    public void BS() {
+
+        System.out.println("Establish database connectivity");
+    }
+
+    @BeforeTest
+    public void BT() {
+
+        System.out.println("Preconditions");
+    }
+
+    @BeforeClass
+    public void BC() throws IOException {
+
+        // Create Properties object
+        properties = new Properties();
+
+        // Read properties file
+        FileInputStream fis = new FileInputStream(
+                "./src/test/resources/DDT/commondata.properties");
+
+        properties.load(fis);
+
+        fis.close();
+
+        // Read browser from properties file
+        String browser = properties.getProperty("browser");
+
+        // Cross Browser Implementation
+        if (browser.equalsIgnoreCase("chrome")) {
+
+            driver = new ChromeDriver();
+
+        } else if (browser.equalsIgnoreCase("firefox")) {
+
+            driver = new FirefoxDriver();
+
+        } else if (browser.equalsIgnoreCase("edge")) {
+
+            driver = new EdgeDriver();
+
+        } 
+
+        // Browser settings
+        driver.manage().window().maximize();
+
+        driver.manage().timeouts()
+                .implicitlyWait(Duration.ofSeconds(10));
+
+        driver.manage().timeouts()
+                .pageLoadTimeout(Duration.ofSeconds(30));
+
+        System.out.println("Launch Browser");
+        System.out.println("Browser: " + browser);
+    }
+
+    @BeforeMethod
+    public void BM() {
+
+        // Read login details from properties file
+        String url = properties.getProperty("url");
+        String username = properties.getProperty("username");
+        String password = properties.getProperty("password");
+
+        // Open application
+        driver.get(url);
+
+        // Enter username
+        driver.findElement(By.id("user-name"))
+                .sendKeys(username);
+
+        // Enter password
+        driver.findElement(By.id("password"))
+                .sendKeys(password);
+
+        // Click login
+        driver.findElement(By.id("login-button"))
+                .click();
+
+        System.out.println("Login done");
+    }
+
+    @AfterMethod
+    public void AM() {
+
+        System.out.println("Logout Done");
+    }
+
+    @AfterClass
+    public void AC() {
+
+        if (driver != null) {
+
+            driver.quit();
+
+            System.out.println("Close Browser");
+        }
+    }
+
+    @AfterTest
+    public void AT() {
+
+        System.out.println("Post conditions");
+    }
+
+    @AfterSuite
+    public void AS() {
+
+        System.out.println("Close database connectivity");
+    }
+}
+----------------------------------------------------------------------------------
+//Home Page
+
+package pompages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+public class HomePage {
+	WebDriver driver;
+	public HomePage(WebDriver driver) {
+		this.driver= driver;
+		PageFactory.initElements(driver, this);
+	}
+	// Locate the Recruitment link
+			@FindBy(xpath = "//span[text()='Recruitment']")
+			private WebElement recruiterLink;
+			// Click the Recruitment link
+			public void getrecruiterLink() {
+				recruiterLink.click();
+			}
+			// Locate the My Info link
+			@FindBy(xpath = "//span[normalize-space()=\"My Info\"]")
+			private WebElement MyInfoLink;
+			// Click the My Info link
+			public void getMyInfoLink() {
+				MyInfoLink.click();
+			}
+}
+----------------------------------------------------------------------------
+//Login page
+
+package pompages;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+public class LoginPage {
+
+	WebDriver driver;
+	String url;
+	String username;
+	String password;
+	public LoginPage(WebDriver driver) throws IOException {
+		this.driver= driver;
+		PageFactory.initElements(driver, this);
+        FileInputStream fis =new FileInputStream("./src/test/resources/DDT/Orange.properties");
+        Properties p1 = new Properties();
+        p1.load(fis);
+        this.url = p1.getProperty("url");
+        this.username = p1.getProperty("username");
+        this.password = p1.getProperty("password");
+	}
+	
+	@FindBy(xpath = "//input[@name=\"username\"]")
+	private WebElement un;
+	
+	@FindBy(xpath = "//input[@name=\"password\"]")
+	private WebElement pwd;
+	
+	@FindBy(xpath = "//button[@type=\"submit\"]")
+	private WebElement lgbutton;
+	
+	public void getLgbutton() {
+		lgbutton.click();
+	}
+	//Enter username
+	public void getUn() {
+		un.sendKeys(username);
+	}
+	// Enter password
+	public void getPwd() {
+		pwd.sendKeys(password);
+	}
+	// Return application URL
+	public String getUrl() {
+		return url;
+	}
+}
+-----------------------------------------------------------------
+//LogOut Page
+
+package pompages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+public class LogOutPage {
+	WebDriver driver;
+	public LogOutPage(WebDriver driver) {
+		this.driver= driver;
+		PageFactory.initElements(driver, this);
+	}
+	
+	@FindBy(xpath = "//i[@class=\"oxd-icon bi-caret-down-fill oxd-userdropdown-icon\"]")
+	private WebElement dropd;
+	
+	public void getdropd() throws InterruptedException {
+		dropd.click();;
+		Thread.sleep(1500);
+	}
+	
+	@FindBy(xpath = "//a[text()=\"Logout\"]")
+	private WebElement logout;
+	// Click Logout
+	public void getlogout() {
+		logout.click();;
+	}
+
+
+}
+--------------------------------------------------------------------
+//MyInfo Page
+
+package pompages;
+
+import java.time.Duration;
+
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class MyInfoPage {
+	WebDriver driver;
+	public MyInfoPage(WebDriver driver) {
+		this.driver=driver;
+		PageFactory.initElements(driver, this);
+	}
+	
+	// Locate the first name field
+	@FindBy(xpath= "//input[@name=\"firstName\"]")
+	private WebElement fname;
+	// Get the updated first name
+	public String getFname() {
+	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+	    wait.until(ExpectedConditions.attributeToBeNotEmpty(fname, "value"));
+	    return fname.getDomProperty("value");
+	}
+	// Enter the first name
+	public void getFname(String fn) throws InterruptedException {
+		Thread.sleep(1500);
+		fname.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+	    fname.sendKeys(Keys.BACK_SPACE);
+	    Thread.sleep(1500);
+	    fname.sendKeys(fn);
+		Thread.sleep(1500);
+	}
+	// Locate the last name field
+	@FindBy(xpath= "//input[@name=\"lastName\"]")
+	private WebElement Lname;
+	// Get the updated last name
+	public String getLname() {
+	    return Lname.getDomProperty("value");
+	}
+	// Enter the last name
+	public void getLname(String fn) throws InterruptedException {
+		Thread.sleep(1500);
+		Lname.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		Lname.sendKeys(Keys.BACK_SPACE);
+		Lname.sendKeys(fn);
+		Thread.sleep(1500);
+	}
+	// Locate the employee ID field
+	@FindBy(xpath= "//label[text()=\"Employee Id\"]/parent::div/following-sibling::div/child::input")
+	private WebElement empId;
+	// Enter the employee ID
+	public void getempId(String empid) throws InterruptedException {
+		Thread.sleep(1500);
+		empId.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		empId.sendKeys(Keys.BACK_SPACE);
+		empId.sendKeys(empid);
+		Thread.sleep(1500);
+	}
+	// Locate the Save button
+	@FindBy(xpath= "(//button[normalize-space()=\"Save\"])[1]")
+	private WebElement savebtn;
+	// Click the Save button
+	public void getSaveBtn() throws InterruptedException {
+		savebtn.click();
+		Thread.sleep(3000);
+		driver.navigate().refresh();
+	}
+
+}
+-------------------------------------------------------------------
+//Recuiter pager
+
+package pompages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+public class RecruiterPage {
+	WebDriver driver;
+	public RecruiterPage(WebDriver driver) {
+		this.driver= driver;
+		PageFactory.initElements(driver, this);
+	}
+	// Locate the Vacancies link
+	@FindBy(xpath = "//a[text()=\"Vacancies\"]")
+	private WebElement vacancyLink;
+	// Click the Vacancies link
+	public void getvacancyLink() {
+		vacancyLink.click();
+	}
+	// Locate the Add button
+	@FindBy(xpath = "//button[normalize-space()=\"Add\"]")
+	private WebElement addLink;
+	// Click the Add button
+	public void getAddLink() {
+		addLink.click();
+	}
+
+}
+------------------------------------------------------------------------------------
+//vacancy page
+
+package pompages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+public class VacancyPage {
+	WebDriver driver;
+	public VacancyPage(WebDriver driver) {
+		this.driver= driver;
+		PageFactory.initElements(driver, this);
+	}
+	
+	// Locate the Vacancy Name input field
+	@FindBy(xpath = "(//input[@class=\"oxd-input oxd-input--active\"])[2]")
+	private WebElement VacancyName;
+	// Return the Vacancy Name element
+	public WebElement getVacancyName() {
+		return VacancyName;
+	}
+	// Locate the Job Title dropdown
+	@FindBy(xpath = "//div[@class=\"oxd-select-text oxd-select-text--active\"]")
+	private WebElement JobTi;
+	// Click the Job Title dropdown
+	public void getJobTi() {
+		JobTi.click();;
+	}
+	// Locate the Software Engineer option
+	@FindBy(xpath = "//span[text()=\"Software Engineer\"]")
+	private WebElement JobTittle;
+	// Select Software Engineer from the dropdown
+	public void getJobTittle() throws InterruptedException {
+		JobTittle.click();
+		Thread.sleep(1500);
+	}
+	// Locate the Description text area
+	@FindBy(xpath = "//textarea[@placeholder=\"Type description here\"]")
+	private WebElement Des;
+	// Enter the vacancy description
+	public void getDes(String des) throws InterruptedException {
+		Des.sendKeys(des);
+		Thread.sleep(1500);
+	}
+	// Locate the HR Manager input field
+	@FindBy(xpath = "//input[@placeholder=\"Type for hints...\"]")
+	private WebElement hRm;
+	// Enter the HR Manager name and wait for suggestions
+	public void gethRm(String hrm) throws InterruptedException {
+		hRm.sendKeys(hrm);
+		Thread.sleep(3000);
+	}
+	// Locate the Number of Positions input field
+	@FindBy(xpath = "(//div[@class=\"oxd-input-group oxd-input-field-bottom-space\"]/descendant::div[@class=\"oxd-input-group__label-wrapper\"]/following-sibling::div/input)[2]")
+	private WebElement noofpositions;
+	// Enter the number of positions
+	public void getnoofp() {
+		noofpositions.sendKeys("20");
+	}
+	// Locate the Save button
+	@FindBy(xpath = "//button[normalize-space()=\"Save\"]")
+	private WebElement savebtn;
+	// Click the Save button
+	public void getsavebtn() {
+		savebtn.click();
+	}
+
+}
+------------------------------------------------------------------
+//Test Case 1
+
+package baseClassImplementation;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import baseClassUtility.OrangeBaseClass;
+import pompages.HomePage;
+import pompages.RecruiterPage;
+import pompages.VacancyPage;
+
+public class OrangeTest extends OrangeBaseClass{
+	// Read vacancy details from Excel
+	@DataProvider
+	public Object[][] JobDetails() throws EncryptedDocumentException, IOException{
+		FileInputStream fis = new FileInputStream("./src/test/resources/DDT/OrangeHRm.xlsx");
+		Workbook wb = WorkbookFactory.create(fis);
+		Sheet sh = wb.getSheet("Sheet1");
+		Object[][] ob = new Object[sh.getLastRowNum()][3];
+		for(int i=0;i<sh.getLastRowNum();i++) {
+			for(int j=0;j<3;j++) {
+				ob[i][j]=sh.getRow(i+1).getCell(j).getStringCellValue();
+			}
+		}
+		return ob;
+	}
+	// Test Case 1: Create a vacancy
+	@Test(dataProvider="JobDetails")
+	// Create vacancy using the data from Excel
+	public void TestCase1(String VacancyName,String VacancyDes,String hrm) throws FileNotFoundException, AWTException, InterruptedException {
+		System.out.println("Executing");
+		// Open Recruitment
+		HomePage h = new HomePage(driver);
+		h.getrecruiterLink();
+		// Open Vacancies
+		RecruiterPage rp = new RecruiterPage(driver);
+		rp.getvacancyLink();
+		// Click Add button
+		rp.getAddLink();
+		// Enter vacancy name
+		VacancyPage vp = new VacancyPage(driver);
+		vp.getVacancyName().sendKeys(VacancyName);
+		Thread.sleep(1500);
+		// Select Job Title
+		vp.getJobTi();
+		vp.getJobTittle();
+		// Enter description
+		vp.getDes(VacancyDes);
+		// Enter Hiring Manager
+		vp.gethRm(hrm);
+		// Select Hiring Manager from suggestions
+		Robot robot = new Robot();
+		robot.keyPress(KeyEvent.VK_DOWN);
+		robot.keyRelease(KeyEvent.VK_DOWN);
+		robot.keyPress(KeyEvent.VK_ENTER);
+		robot.keyRelease(KeyEvent.VK_ENTER);
+		// Enter number of positions
+		vp.getnoofp();
+		// Save the vacancy
+		vp.getsavebtn();
+		System.out.println("Executed");
+	}
+}
+--------------------------------------------------------------------------------
+//Test Case 2
+
+package baseClassImplementation;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import baseClassUtility.OrangeBaseClass;
+import pompages.HomePage;
+import pompages.LogOutPage;
+import pompages.LoginPage;
+import pompages.MyInfoPage;
+
+public class HrmTestCase2 extends OrangeBaseClass{
+	// Read vacancy details from Excel
+	@DataProvider
+	public Object[][] JobDetails() throws EncryptedDocumentException, IOException{
+		FileInputStream fis = new FileInputStream("./src/test/resources/DDT/OrangeHRm.xlsx");
+		Workbook wb = WorkbookFactory.create(fis);
+		Sheet sh = wb.getSheet("Sheet2");
+		Object[][] ob = new Object[sh.getLastRowNum()][3];
+		for(int i=0;i<sh.getLastRowNum();i++) {
+			for(int j=0;j<3;j++) {
+				ob[i][j]=sh.getRow(i+1).getCell(j).getStringCellValue();
+			}
+		}
+		return ob;
+	}
+	
+	
+	@Test
+	public void TestCase() throws InterruptedException, IOException {
+		System.out.println("Executing");
+	    // Open My Info
+	    HomePage r = new HomePage(driver);
+	    r.getMyInfoLink();
+	    // Edit employee details
+	    MyInfoPage m = new MyInfoPage(driver);
+	    m.getFname("Snigdha");
+	    m.getLname("Spoorthi");
+	    m.getempId("EMP123");
+	    // Save the changes
+	    m.getSaveBtn();
+	    // Logout
+	    LogOutPage lg = new LogOutPage(driver);
+	    lg.getdropd();
+	    lg.getlogout();
+	    // Login again
+	    LoginPage li = new LoginPage(driver);
+	    li.getUn();
+	    li.getPwd();
+	    li.getLgbutton();
+	    // Open My Info again
+	    HomePage r2 = new HomePage(driver);
+	    r2.getMyInfoLink();
+	    // Create a new POM for the new page
+	    MyInfoPage m2 = new MyInfoPage(driver);
+	    // Get the updated details
+	    String updatedFname = m2.getFname();
+	    String updatedLname = m2.getLname();
+	    // Verify the updated details
+	    Assert.assertEquals(updatedFname, "Snigdha");
+	    Assert.assertEquals(updatedLname, "Spoorthi");
+	    System.out.println("Executed");
+	}
+}
